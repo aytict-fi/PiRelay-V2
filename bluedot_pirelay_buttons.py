@@ -17,33 +17,21 @@ Connect relay IN pins to GPIO 17, 27, 22, 23 (default).
 """
 
 
-from bluedot import BlueDot, Button
-import signal
+
+from bluedot import BlueDot
+from signal import pause
 from PiRelay import Relay
 
 # Relay labels as per PiRelay.py
 RELAY_LABELS = ["RELAY1", "RELAY2", "RELAY3", "RELAY4"]
-# Create relay objects
 relays = [Relay(label) for label in RELAY_LABELS]
-# Track relay states
 relay_states = [False] * len(relays)
 
-# BlueDot setup
-bd = BlueDot()
-
-# Create 5 buttons
-bd.clear_buttons()
-
-# Button 0: All relays
-bd.add_button("All", position=(0, 0), color="blue")
-# Button 1-4: Individual relays
-bd.add_button("Relay 1", position=(1, 0), color="green")
-bd.add_button("Relay 2", position=(2, 0), color="red")
-bd.add_button("Relay 3", position=(3, 0), color="yellow")
-bd.add_button("Relay 4", position=(4, 0), color="orange")
+# BlueDot grid: 2 columns, 3 rows (enough for 5 buttons)
+bd = BlueDot(cols=2, rows=3)
 
 
-# Helper functions using PiRelay Relay class
+
 def set_relay(index, state):
     relay_states[index] = state
     if state:
@@ -61,30 +49,34 @@ def set_all_relays(state):
     print(f"All relays {'ON' if state else 'OFF'}")
 
 def toggle_all_relays():
-    # If any relay is off, turn all on; else, turn all off
     new_state = not all(relay_states)
     set_all_relays(new_state)
 
-# Button handlers
-def handle_button(pos):
-    if pos.button.text == "All":
+
+# Button mapping:
+# (0,0): All relays
+# (0,1): Relay 1
+# (1,1): Relay 2
+# (0,2): Relay 3
+# (1,2): Relay 4
+
+def pressed(pos):
+    print("button {}.{} pressed".format(pos.col, pos.row))
+    if (pos.col, pos.row) == (0, 0):
         toggle_all_relays()
-    elif pos.button.text == "Relay 1":
+    elif (pos.col, pos.row) == (0, 1):
         toggle_relay(0)
-    elif pos.button.text == "Relay 2":
+    elif (pos.col, pos.row) == (1, 1):
         toggle_relay(1)
-    elif pos.button.text == "Relay 3":
+    elif (pos.col, pos.row) == (0, 2):
         toggle_relay(2)
-    elif pos.button.text == "Relay 4":
+    elif (pos.col, pos.row) == (1, 2):
         toggle_relay(3)
     else:
         print("Unknown button pressed.")
 
-bd.when_pressed = handle_button
+bd.when_pressed = pressed
 
-print("BlueDot PiRelay (5 buttons) started. Use the BlueDot app to control relays.")
+print("BlueDot PiRelay (5 buttons, grid mode) started. Use the BlueDot app to control relays.")
 
-try:
-    signal.pause()  # Wait for events
-finally:
-    print("Exiting. GPIO cleanup handled by PiRelay library if needed.")
+pause()
