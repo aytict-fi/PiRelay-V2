@@ -8,7 +8,7 @@ Wants=bluetooth.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /home/a/git/aytict.fi/PiRelay-V2/bluedot_pirelay_buttons.py
-WorkingDirectory=/home/a/git/aytict.fi/PiRelay-V2
+WorkingDirectory=/home/a/git/PiRelay-V2
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
