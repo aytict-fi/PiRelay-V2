@@ -1,6 +1,9 @@
+
 [Unit]
 Description=BlueDot PiRelay Buttons Service
-After=network.target
+After=network.target bluetooth.target
+Wants=bluetooth.target
+
 
 [Service]
 Type=simple
@@ -10,6 +13,7 @@ StandardOutput=inherit
 StandardError=inherit
 Restart=always
 User=pi
+
 
 [Install]
 WantedBy=multi-user.target
