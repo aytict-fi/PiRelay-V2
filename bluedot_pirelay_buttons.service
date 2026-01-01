@@ -1,0 +1,15 @@
+[Unit]
+Description=BlueDot PiRelay Buttons Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/a/git/aytict.fi/PiRelay-V2/bluedot_pirelay_buttons.py
+WorkingDirectory=/home/a/git/aytict.fi/PiRelay-V2
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
