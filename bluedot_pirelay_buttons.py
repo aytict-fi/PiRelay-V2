@@ -16,21 +16,17 @@ Install dependencies:
 Connect relay IN pins to GPIO 17, 27, 22, 23 (default).
 """
 
+
 from bluedot import BlueDot, Button
-import RPi.GPIO as GPIO
 import signal
+from PiRelay import Relay
 
-# GPIO pins for relays
-RELAY_PINS = [17, 27, 22, 23]  # You can change these as needed
-
-# Setup GPIO
-GPIO.setmode(GPIO.BCM)
-for pin in RELAY_PINS:
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, GPIO.LOW)  # Start with relays off
-
+# Relay labels as per PiRelay.py
+RELAY_LABELS = ["RELAY1", "RELAY2", "RELAY3", "RELAY4"]
+# Create relay objects
+relays = [Relay(label) for label in RELAY_LABELS]
 # Track relay states
-relay_states = [False] * len(RELAY_PINS)
+relay_states = [False] * len(relays)
 
 # BlueDot setup
 bd = BlueDot()
@@ -46,17 +42,21 @@ bd.add_button("Relay 2", position=(2, 0), color="red")
 bd.add_button("Relay 3", position=(3, 0), color="yellow")
 bd.add_button("Relay 4", position=(4, 0), color="orange")
 
-# Helper functions
+
+# Helper functions using PiRelay Relay class
 def set_relay(index, state):
     relay_states[index] = state
-    GPIO.output(RELAY_PINS[index], GPIO.HIGH if state else GPIO.LOW)
+    if state:
+        relays[index].on()
+    else:
+        relays[index].off()
     print(f"Relay {index+1} {'ON' if state else 'OFF'}")
 
 def toggle_relay(index):
     set_relay(index, not relay_states[index])
 
 def set_all_relays(state):
-    for i in range(len(RELAY_PINS)):
+    for i in range(len(relays)):
         set_relay(i, state)
     print(f"All relays {'ON' if state else 'OFF'}")
 
@@ -87,5 +87,4 @@ print("BlueDot PiRelay (5 buttons) started. Use the BlueDot app to control relay
 try:
     signal.pause()  # Wait for events
 finally:
-    GPIO.cleanup()
-    print("GPIO cleaned up.")
+    print("Exiting. GPIO cleanup handled by PiRelay library if needed.")

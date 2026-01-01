@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.stuffaboutcode.bluedot">
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />/>
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_bluebutton"
+        android:label="Blue Dot"
+        android:roundIcon="@mipmap/ic_launcher_bluebutton"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:exported="true"
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".Devices">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stuffaboutcode.bluedot.Devices" />
+        </activity>
+        <activity
+            android:exported="true"
+            android:name=".Devices"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Button"
+            android:configChanges="orientation|screenSize" />
+    </application>
+
+</manifest>
