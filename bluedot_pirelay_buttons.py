@@ -31,6 +31,13 @@ relay_states = [False] * len(relays)
 bd = BlueDot(cols=2, rows=3)
 
 
+# Set text for each button
+bd.buttons[0,0].text = "All Relays"
+bd.buttons[0,1].text = "Relay 1"
+bd.buttons[1,1].text = "Relay 2"
+bd.buttons[0,2].text = "Relay 3"
+bd.buttons[1,2].text = "Relay 4"
+
 
 def set_relay(index, state):
     relay_states[index] = state
