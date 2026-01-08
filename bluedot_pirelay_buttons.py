@@ -21,16 +21,44 @@ Connect relay IN pins to GPIO 17, 27, 22, 23 (default).
 from bluedot import BlueDot
 from signal import pause
 from PiRelay import Relay
+import time
+import threading
 
 # Relay labels as per PiRelay.py
 RELAY_LABELS = ["RELAY1", "RELAY2", "RELAY3", "RELAY4"]
 relays = [Relay(label) for label in RELAY_LABELS]
 relay_states = [False] * len(relays)
 
+# For logging relay on/off times and counts
+relay_on_times = [0.0] * len(relays)  # Timestamp when relay was last turned on
+relay_on_durations = [0.0] * len(relays)  # Total ON duration for each relay
+relay_on_counts = [0] * len(relays)  # Number of times each relay has been turned on
+log_lock = threading.Lock()
+
+def log_relay_event(index, event, duration=None):
+    with log_lock:
+        with open("relay_on.log", "a") as f:
+            if event == "on":
+                f.write(f"Relay {index+1} ON at {time.strftime('%Y-%m-%d %H:%M:%S')} (count: {relay_on_counts[index]})\n")
+            elif event == "off" and duration is not None:
+                f.write(f"Relay {index+1} OFF at {time.strftime('%Y-%m-%d %H:%M:%S')} (duration: {duration:.2f} sec, total: {relay_on_durations[index]:.2f} sec)\n")
+
 # BlueDot grid: 2 columns, 3 rows (enough for 5 buttons)
 bd = BlueDot(cols=2, rows=3)
 
 def set_relay(index, state):
+    if state and not relay_states[index]:
+        # Turning ON
+        relay_on_times[index] = time.time()
+        relay_on_counts[index] += 1
+        log_relay_event(index, "on")
+    elif not state and relay_states[index]:
+        # Turning OFF
+        if relay_on_times[index] > 0:
+            duration = time.time() - relay_on_times[index]
+            relay_on_durations[index] += duration
+            log_relay_event(index, "off", duration)
+        relay_on_times[index] = 0.0
     relay_states[index] = state
     if state:
         relays[index].on()
