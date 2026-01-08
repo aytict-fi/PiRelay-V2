@@ -42,7 +42,7 @@ def toggle_relay(index):
     set_relay(index, not relay_states[index])
 
 def set_two_relays(state):
-    for i in range(int(2)):
+    for i in range(2):
         set_relay(i, state)
     print(f"Two relays {'ON' if state else 'OFF'}")
 
@@ -59,7 +59,6 @@ def set_all_relays(state):
 def toggle_all_relays():
     new_state = not all(relay_states)
     set_all_relays(new_state)
-    print(f"Two relays {'ON' if state else 'OFF'}")
 
 # Button mapping:
 # (0,0): All relays
