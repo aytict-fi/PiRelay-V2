@@ -30,15 +30,6 @@ relay_states = [False] * len(relays)
 # BlueDot grid: 2 columns, 3 rows (enough for 5 buttons)
 bd = BlueDot(cols=2, rows=3)
 
-
-# Set text for each button
-bd.buttons[0,0].text = "All Relays"
-bd.buttons[0,1].text = "Relay 1"
-bd.buttons[1,1].text = "Relay 2"
-bd.buttons[0,2].text = "Relay 3"
-bd.buttons[1,2].text = "Relay 4"
-
-
 def set_relay(index, state):
     relay_states[index] = state
     if state:
@@ -50,6 +41,16 @@ def set_relay(index, state):
 def toggle_relay(index):
     set_relay(index, not relay_states[index])
 
+def set_two_relays(state):
+    for i in range(int(2)):
+        set_relay(i, state)
+    print(f"Two relays {'ON' if state else 'OFF'}")
+
+def toggle_two_relays():
+    new_state = not all(relay_states)
+    set_two_relays(new_state)
+
+
 def set_all_relays(state):
     for i in range(len(relays)):
         set_relay(i, state)
@@ -58,7 +59,6 @@ def set_all_relays(state):
 def toggle_all_relays():
     new_state = not all(relay_states)
     set_all_relays(new_state)
-
 
 # Button mapping:
 # (0,0): All relays
@@ -79,6 +79,8 @@ def pressed(pos):
         toggle_relay(2)
     elif (pos.col, pos.row) == (1, 2):
         toggle_relay(3)
+    elif (pos.col, pos.row) == (1, 0):
+        toggle_two_relays()
     else:
         print("Unknown button pressed.")
 
