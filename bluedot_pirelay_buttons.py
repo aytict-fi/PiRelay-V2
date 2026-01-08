@@ -59,6 +59,7 @@ def set_all_relays(state):
 def toggle_all_relays():
     new_state = not all(relay_states)
     set_all_relays(new_state)
+    print(f"Two relays {'ON' if state else 'OFF'}")
 
 # Button mapping:
 # (0,0): All relays
@@ -73,14 +74,14 @@ def pressed(pos):
         toggle_all_relays()
     elif (pos.col, pos.row) == (0, 1):
         toggle_relay(0)
+    elif (pos.col, pos.row) == (1, 0):
+        toggle_two_relays()
     elif (pos.col, pos.row) == (1, 1):
         toggle_relay(1)
     elif (pos.col, pos.row) == (0, 2):
         toggle_relay(2)
     elif (pos.col, pos.row) == (1, 2):
         toggle_relay(3)
-    elif (pos.col, pos.row) == (1, 0):
-        toggle_two_relays()
     else:
         print("Unknown button pressed.")
 
