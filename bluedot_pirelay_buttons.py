@@ -33,7 +33,23 @@ relay_states = [False] * len(relays)
 relay_on_times = [0.0] * len(relays)  # Timestamp when relay was last turned on
 relay_on_durations = [0.0] * len(relays)  # Total ON duration for each relay
 relay_on_counts = [0] * len(relays)  # Number of times each relay has been turned on
+
 log_lock = threading.Lock()
+
+# Background logger thread to log ON durations while running
+def background_duration_logger(interval=5):
+    while True:
+        time.sleep(interval)
+        with log_lock:
+            with open("relay_on.log", "a") as f:
+                now = time.time()
+                for i in range(len(relays)):
+                    if relay_states[i] and relay_on_times[i] > 0:
+                        current_duration = relay_on_durations[i] + (now - relay_on_times[i])
+                        f.write(f"Relay {i+1} ON (running) at {time.strftime('%Y-%m-%d %H:%M:%S')} (count: {relay_on_counts[i]}, duration: {current_duration:.2f} sec)\n")
+
+# Start the background logger thread
+threading.Thread(target=background_duration_logger, args=(5,), daemon=True).start()
 
 def log_relay_event(index, event, duration=None):
     with log_lock:
