@@ -41,17 +41,21 @@ def set_relay(index, state):
 def toggle_relay(index):
     set_relay(index, not relay_states[index])
 
-def set_two_relays(index, state):
-    relay_states[index] = state
+def set_two_relays(state):
+    relay_states[0] = state
+    relay_states[1] = state
     if state:
+        relays[0].on()
         relays[1].on()
-        relays[2].on()
     else:
+        relays[0].off()
         relays[1].off()
-        relays[2].off()
+    print(f"Relays 1 and 2 {'ON' if state else 'OFF'}")
 
 def toggle_two_relays():
-    set_two_relays(not relay_states[index])
+    # Toggle both relays 1 and 2 together
+    new_state = not (relay_states[0] and relay_states[1])
+    set_two_relays(new_state)
 
 def set_all_relays(state):
     for i in range(len(relays)):
@@ -62,12 +66,13 @@ def toggle_all_relays():
     new_state = not all(relay_states)
     set_all_relays(new_state)
 
-# Button mapping:
-# (0,0): All relays
-# (0,1): Relay 1
-# (1,1): Relay 2
-# (0,2): Relay 3
-# (1,2): Relay 4
+    # Button mapping:
+    # (0,0): All relays
+    # (0,1): Relay 1
+    # (1,0): Relays 1 & 2 (top right)
+    # (1,1): Relay 2
+    # (0,2): Relay 3
+    # (1,2): Relay 4
 
 def pressed(pos):
     print("button {}.{} pressed".format(pos.col, pos.row))
